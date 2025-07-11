@@ -4,12 +4,14 @@ This guide covers secure handling of Azure credentials, client secrets, and sens
 
 ## Overview
 
-The secret management strategy uses multiple layers:
+For local development and testing, we use a secure local secret management strategy:
 
-1. **Environment Variables** - Runtime secrets
-2. **Azure Key Vault** - Production secret storage
-3. **Local Secret Files** - Development (git-ignored)
-4. **MCP Server Configuration** - Secure credential passing
+1. **Local Environment Files** - `.env.local` files (git-ignored)
+2. **Environment Variables** - Runtime secrets loaded into shell
+3. **MCP Configuration** - Environment variable references in config files
+4. **Secure File Permissions** - Restrict access to secret files
+
+**Note**: This guide focuses on local development. For production environments, consider Azure Key Vault or other enterprise secret management solutions.
 
 ## Environment Variables
 
@@ -31,85 +33,193 @@ export MCP_LOG_LEVEL="INFO"
 export AZURE_GRAPH_API_VERSION="v1.0"
 ```
 
-### Environment File Template
+## Local Environment Setup
 
-Create `.env.local` (git-ignored) for local development:
+### Step 1: Create Local Environment File
+
+1. **Copy the template**
+   ```bash
+   cp config/templates/.env.template .env.local
+   ```
+
+2. **Set secure file permissions**
+   ```bash
+   chmod 600 .env.local
+   ```
+
+3. **Edit with your actual credentials**
+   ```bash
+   # Use your preferred editor
+   code .env.local
+   # or
+   nano .env.local
+   ```
+
+### Step 2: Configure Azure Credentials
+
+Replace the placeholder values in `.env.local` with your actual Azure credentials:
 
 ```bash
-# Copy to .env.local and fill in actual values
+# Azure Tenant 1 (Dasein Research Group)
 AZURE_TENANT_1_ID=ef63f3e9-134f-428f-b601-1bfe781034f8
 AZURE_CLIENT_1_ID=16554e45-c734-480d-bb04-9f9fe7a3ab5e
-AZURE_CLIENT_1_SECRET=your_actual_secret_here
+AZURE_CLIENT_1_SECRET=your_actual_client_secret_here
 
+# Azure Tenant 2 (Spectral Solutions)
 AZURE_TENANT_2_ID=049d5c8d-0cb4-4880-bc97-8a770b44be56
 AZURE_CLIENT_2_ID=15315bba-3aa4-46c6-be01-955198f119e0
-AZURE_CLIENT_2_SECRET=your_actual_secret_here
+AZURE_CLIENT_2_SECRET=your_actual_client_secret_here
+
+# Optional Configuration
+MCP_LOG_LEVEL=INFO
+AZURE_GRAPH_API_VERSION=v1.0
+DEBUG_MODE=false
+ENABLE_AUDIT_LOGGING=true
 ```
 
-## MCP Server Secret Configuration
+### Step 3: Load Environment Variables
 
-### Lokka MCP Configuration with Environment Variables
+Load the credentials into your current shell session:
+
+```bash
+source scripts/utilities/load-env.sh
+```
+
+### Step 4: Verify Configuration
+
+Check that all required variables are set:
+
+```bash
+scripts/utilities/check-env.sh
+```
+
+## Lokka MCP Server Configuration
+
+### Local MCP Configuration File
+
+The Lokka MCP server reads credentials from environment variables. Here's how to set it up:
+
+### Step 1: Create MCP Configuration
+
+1. **Create your local MCP config**
+   ```bash
+   cp config/templates/mcp-servers-template.json ~/.mcp-config.json
+   ```
+
+2. **For Claude Desktop users**
+   ```bash
+   # macOS
+   cp config/templates/mcp-servers-template.json ~/Library/Application\ Support/Claude/claude_desktop_config.json
+   
+   # Windows  
+   cp config/templates/mcp-servers-template.json %APPDATA%\Claude\claude_desktop_config.json
+   ```
+
+### Step 2: Understand Environment Variable Substitution
+
+The configuration uses environment variables for security:
 
 ```json
 {
   "mcpServers": {
     "lokka-dasein": {
-      "command": "lokka",
+      "command": "lokka-mcp",
       "args": [
         "--tenant-id", "${AZURE_TENANT_1_ID}",
         "--client-id", "${AZURE_CLIENT_1_ID}",
-        "--client-secret", "${AZURE_CLIENT_1_SECRET}"
-      ]
+        "--client-secret", "${AZURE_CLIENT_1_SECRET}",
+        "--scope", "https://graph.microsoft.com/.default"
+      ],
+      "env": {
+        "LOKKA_LOG_LEVEL": "${MCP_LOG_LEVEL:-INFO}"
+      }
     },
     "lokka-spectral": {
-      "command": "lokka", 
+      "command": "lokka-mcp",
       "args": [
         "--tenant-id", "${AZURE_TENANT_2_ID}",
         "--client-id", "${AZURE_CLIENT_2_ID}",
-        "--client-secret", "${AZURE_CLIENT_2_SECRET}"
-      ]
+        "--client-secret", "${AZURE_CLIENT_2_SECRET}",
+        "--scope", "https://graph.microsoft.com/.default"
+      ],
+      "env": {
+        "LOKKA_LOG_LEVEL": "${MCP_LOG_LEVEL:-INFO}"
+      }
     }
   }
 }
 ```
 
-### Secure Configuration Loading
+### Step 3: Start Your Client with Environment Variables
 
-Use the provided script to load environment variables:
-
+**For Claude Desktop:**
 ```bash
-# Load secrets from .env.local
-source config/secrets/load-env.sh
+# Load environment variables first
+source scripts/utilities/load-env.sh
 
-# Verify configuration (without exposing secrets)
-./scripts/utilities/verify-config.sh
+# Start Claude Desktop from terminal (so it inherits env vars)
+open -a "Claude"  # macOS
+# or start from Applications menu after setting system env vars
 ```
 
-## Azure Key Vault Integration
-
-### Production Secret Storage
-
+**For VS Code:**
 ```bash
-# Store secrets in Azure Key Vault
-az keyvault secret set \
-  --vault-name "multi-tenant-secrets" \
-  --name "azure-client-1-secret" \
-  --value "$AZURE_CLIENT_1_SECRET"
+# Load environment variables
+source scripts/utilities/load-env.sh
 
-az keyvault secret set \
-  --vault-name "multi-tenant-secrets" \
-  --name "azure-client-2-secret" \
-  --value "$AZURE_CLIENT_2_SECRET"
+# Start VS Code from terminal
+code .
 ```
 
-### Retrieve from Key Vault
+**For Custom Clients:**
+```bash
+# Environment variables are already loaded and available to any process
+# started from this terminal session
+```
+
+## Testing Your Local Setup
+
+### Verify Environment Variables Are Loaded
 
 ```bash
-# Retrieve secrets for production use
-AZURE_CLIENT_1_SECRET=$(az keyvault secret show \
-  --vault-name "multi-tenant-secrets" \
-  --name "azure-client-1-secret" \
-  --query "value" -o tsv)
+# Check that variables are set (without exposing values)
+scripts/utilities/check-env.sh
+
+# Test specific variable (shows first 8 characters only)
+echo "Tenant 1 ID: ${AZURE_TENANT_1_ID:0:8}..."
+echo "Client 1 ID: ${AZURE_CLIENT_1_ID:0:8}..."
+```
+
+### Test Azure Authentication
+
+```bash
+# Test authentication using Azure CLI
+az login --service-principal \
+  --username $AZURE_CLIENT_1_ID \
+  --password $AZURE_CLIENT_1_SECRET \
+  --tenant $AZURE_TENANT_1_ID
+
+# Verify access to Graph API
+az rest --method GET --uri "https://graph.microsoft.com/v1.0/me" || \
+az rest --method GET --uri "https://graph.microsoft.com/v1.0/organization"
+```
+
+### Test MCP Server Connectivity
+
+If you have Lokka MCP installed locally:
+
+```bash
+# Test direct connection
+lokka-mcp --tenant-id $AZURE_TENANT_1_ID \
+          --client-id $AZURE_CLIENT_1_ID \
+          --client-secret $AZURE_CLIENT_1_SECRET \
+          --test-connection
+
+# Or test with a simple query
+lokka-mcp --tenant-id $AZURE_TENANT_1_ID \
+          --client-id $AZURE_CLIENT_1_ID \
+          --client-secret $AZURE_CLIENT_1_SECRET \
+          --query "organization"
 ```
 
 ## Security Best Practices

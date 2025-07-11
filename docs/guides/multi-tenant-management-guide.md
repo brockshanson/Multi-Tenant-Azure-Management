@@ -13,20 +13,65 @@ This guide covers the complete methodology for managing multiple Azure tenants t
 
 ## Quick Start
 
-1. **Prerequisites Setup**
-   - Review [Azure Prerequisites](../references/azure-prerequisites.md)
-   - Configure [Secret Management](../references/secret-management.md)
-   - Install [Required Tools](../references/required-tools.md)
+**Choose Your Setup Approach:**
 
-2. **Tenant Configuration**
-   - Follow [Tenant Setup Guide](tenant-setup-guide.md)
-   - Configure [MCP Servers](../references/mcp-configuration.md)
-   - Test [Authentication](../references/authentication-guide.md)
+1. **MCP-Only Setup (Recommended)**
+   - No Azure CLI dependency
+   - Manual Azure Portal app registration
+   - Pure MCP authentication at runtime
+   - Follow [MCP-Only Setup Guide](mcp-only-setup-guide.md)
 
-3. **Begin Operations**
-   - Use [Generic Workflow Templates](../../workflows/generic/)
-   - Create [Specific Workflows](../../workflows/specific/) for your tenants
-   - Follow [Logging Best Practices](../references/logging-best-practices.md)
+2. **Automated Setup (Azure CLI)**
+   - Fully automated app registration
+   - Requires Azure CLI installation
+   - Run `./scripts/utilities/setup-azure-credentials.sh`
+   - Follow [Quick Start Guide](quick-start-guide.md)
+
+3. **Manual Setup (Azure CLI)**
+   - Step-by-step with Azure CLI commands
+   - Follow [Local Credential Setup Walkthrough](local-credential-setup-walkthrough.md)
+
+4. **Troubleshooting**
+   - Consult [Troubleshooting Guide](troubleshooting-guide.md) for common issues
+
+**Runtime Operations (All Approaches):**
+- All authentication flows through Lokka MCP servers
+- No Azure CLI needed during normal operations
+- Pure Graph API access via MCP interface
+
+## Authentication Architecture
+
+### Setup vs Runtime Authentication
+
+It's important to understand the difference between **setup authentication** and **runtime authentication**:
+
+**Setup Phase (One-time):**
+- Creates Azure app registrations
+- Generates client secrets
+- Sets API permissions
+- Can use Azure CLI (automated) OR Azure Portal (manual)
+
+**Runtime Phase (Ongoing):**
+- All authentication through Lokka MCP servers
+- Direct Graph API access via service principal
+- No Azure CLI dependency
+- Pure MCP-based operations
+
+### Authentication Flow Options
+
+```mermaid
+graph TD
+    A[Setup Approach] --> B[Azure CLI Automated]
+    A --> C[Azure Portal Manual]
+    B --> D[App Registration Created]
+    C --> D
+    D --> E[Credentials in .env.local]
+    E --> F[Lokka MCP Server]
+    F --> G[Microsoft Graph API]
+    F --> H[Your MCP Client]
+```
+
+**Key Insight:** Azure CLI is **only needed for automated setup**. All runtime operations use pure MCP authentication, making the system lightweight and dependency-free for daily use.
 
 ## Business Context
 
@@ -154,7 +199,8 @@ The MCP server architecture is designed to be platform-agnostic, supporting mult
 - [x] Repository structure and documentation
 - [x] Secret management configuration
 - [x] VS Code workspace setup
-- [ ] Complete tenant authentication
+- [x] Local credential setup automation
+- [x] Authentication testing and validation
 
 ### Phase 2: Multi-Tenant Configuration 🚧
 

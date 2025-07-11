@@ -4,23 +4,36 @@ A comprehensive framework for managing multiple Azure tenants using Lokka MCP se
 
 ## 🚀 Quick Start
 
-1. **Clone and Setup**
-   ```bash
-   git clone <repository-url>
-   cd "Tenant Automation Workbook"
-   ```
+**Option 1: Automated Setup (Recommended)**
+```bash
+git clone <repository-url>
+cd "Tenant Automation Workbook"
+./scripts/utilities/setup-azure-credentials.sh
+```
 
-2. **Configure Secrets**
-   ```bash
-   cp config/templates/.env.template .env.local
-   # Edit .env.local with your Azure credentials
-   source scripts/utilities/load-env.sh
-   ```
+**Option 2: Manual Setup**
+```bash
+# 1. Copy environment template
+cp config/templates/.env.template .env.local
 
-3. **Choose Your Interface**
-   - **VS Code + GitHub Copilot** (Recommended for teams)
-   - **Claude Desktop** (Great for natural language queries)
-   - **Custom API/Scripts** (Automation and CI/CD)
+# 2. Configure your Azure credentials in .env.local
+
+# 3. Load environment and test
+source scripts/utilities/load-env.sh
+./scripts/utilities/check-env.sh --test-auth
+```
+
+**Start Your Client**
+```bash
+# Load environment variables
+source scripts/utilities/load-env.sh
+
+# Start your preferred MCP client
+code .              # VS Code
+open -a "Claude"    # Claude Desktop
+```
+
+📖 **Detailed Setup:** [Quick Start Guide](docs/guides/quick-start-guide.md) | [Local Credential Setup Walkthrough](docs/guides/local-credential-setup-walkthrough.md)
 
 ## 📁 Repository Structure
 
