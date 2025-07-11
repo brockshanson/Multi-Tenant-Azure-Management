@@ -1,0 +1,38 @@
+{
+  "mcp.servers": {
+    "lokka-dasein": {
+      "command": "npx",
+      "args": [
+        "lokka-mcp",
+        "--tenant-id", "${AZURE_TENANT_1_ID}",
+        "--client-id", "${AZURE_CLIENT_1_ID}",
+        "--client-secret", "${AZURE_CLIENT_1_SECRET}",
+        "--scope", "https://graph.microsoft.com/.default"
+      ],
+      "env": {
+        "LOKKA_LOG_LEVEL": "${MCP_LOG_LEVEL:-INFO}"
+      }
+    },
+    "lokka-spectral": {
+      "command": "npx",
+      "args": [
+        "lokka-mcp",
+        "--tenant-id", "${AZURE_TENANT_2_ID}",
+        "--client-id", "${AZURE_CLIENT_2_ID}",
+        "--client-secret", "${AZURE_CLIENT_2_SECRET}",
+        "--scope", "https://graph.microsoft.com/.default"
+      ],
+      "env": {
+        "LOKKA_LOG_LEVEL": "${MCP_LOG_LEVEL:-INFO}"
+      }
+    }
+  },
+  "mcp.enabled": true,
+  "mcp.autoStart": true,
+  "files.associations": {
+    "*.env.local": "properties"
+  },
+  "files.exclude": {
+    "**/.env.local": false
+  }
+}

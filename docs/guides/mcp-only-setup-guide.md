@@ -126,27 +126,162 @@ ENABLE_AUDIT_LOGGING=true
 npm install -g lokka-mcp
 ```
 
-### 4.2 Set Up MCP Configuration
+### 4.2 Configure for Your MCP Client
+
+Choose your preferred client configuration:
+
+#### Option A: VS Code Configuration
+
+**For VS Code with MCP extensions:**
+
+1. **Install required VS Code extensions:**
+   ```bash
+   code --install-extension ms-vscode.vscode-json
+   code --install-extension modelcontextprotocol.mcp
+   ```
+
+2. **Create VS Code MCP configuration:**
+   ```bash
+   # Create VS Code settings directory if it doesn't exist
+   mkdir -p .vscode
+   
+   # Copy MCP configuration for VS Code
+   cp config/templates/mcp-servers-template.json .vscode/mcp-servers.json
+   ```
+
+3. **Update VS Code settings:**
+   
+   Add to `.vscode/settings.json`:
+   ```json
+   {
+     "mcp.servers": {
+       "lokka-dasein": {
+         "command": "npx",
+         "args": [
+           "lokka-mcp",
+           "--tenant-id", "${AZURE_TENANT_1_ID}",
+           "--client-id", "${AZURE_CLIENT_1_ID}",
+           "--client-secret", "${AZURE_CLIENT_1_SECRET}",
+           "--scope", "https://graph.microsoft.com/.default"
+         ],
+         "env": {
+           "LOKKA_LOG_LEVEL": "INFO"
+         }
+       },
+       "lokka-spectral": {
+         "command": "npx",
+         "args": [
+           "lokka-mcp",
+           "--tenant-id", "${AZURE_TENANT_2_ID}",
+           "--client-id", "${AZURE_CLIENT_2_ID}",
+           "--client-secret", "${AZURE_CLIENT_2_SECRET}",
+           "--scope", "https://graph.microsoft.com/.default"
+         ],
+         "env": {
+           "LOKKA_LOG_LEVEL": "INFO"
+         }
+       }
+     }
+   }
+   ```
+
+#### Option B: Claude Desktop Configuration
+
+**For new Claude Desktop setup:**
 
 ```bash
-# Copy MCP template
-cp config/templates/mcp-servers-template.json ~/.mcp-config.json
-
-# For Claude Desktop (macOS)
+# For macOS
 mkdir -p ~/Library/Application\ Support/Claude
 cp config/templates/mcp-servers-template.json \
    ~/Library/Application\ Support/Claude/claude_desktop_config.json
+
+# For Windows
+mkdir -p "$APPDATA/Claude"
+cp config/templates/mcp-servers-template.json \
+   "$APPDATA/Claude/claude_desktop_config.json"
+```
+
+**For existing Claude Desktop configuration:**
+
+If you already have a `claude_desktop_config.json` file, you have two options:
+
+**Option 1: Use the merge script (Recommended):**
+```bash
+# Automatically merge configurations with backup
+./scripts/utilities/merge-claude-config.sh
+```
+
+**Option 2: Manual merge:**
+
+1. **Backup your existing configuration:**
+   ```bash
+   # macOS
+   cp ~/Library/Application\ Support/Claude/claude_desktop_config.json \
+      ~/Library/Application\ Support/Claude/claude_desktop_config.json.backup
+   
+   # Windows
+   cp "$APPDATA/Claude/claude_desktop_config.json" \
+      "$APPDATA/Claude/claude_desktop_config.json.backup"
+   ```
+
+2. **Merge configurations manually:**
+   
+   Open your existing `claude_desktop_config.json` and add the Lokka servers to the `mcpServers` section:
+   
+   ```json
+   {
+     "mcpServers": {
+       "your-existing-server": {
+         // ... your existing server config
+       },
+       "lokka-dasein": {
+         "command": "npx",
+         "args": [
+           "lokka-mcp",
+           "--tenant-id", "${AZURE_TENANT_1_ID}",
+           "--client-id", "${AZURE_CLIENT_1_ID}",
+           "--client-secret", "${AZURE_CLIENT_1_SECRET}",
+           "--scope", "https://graph.microsoft.com/.default"
+         ],
+         "env": {
+           "LOKKA_LOG_LEVEL": "INFO"
+         }
+       },
+       "lokka-spectral": {
+         "command": "npx",
+         "args": [
+           "lokka-mcp",
+           "--tenant-id", "${AZURE_TENANT_2_ID}",
+           "--client-id", "${AZURE_CLIENT_2_ID}",
+           "--client-secret", "${AZURE_CLIENT_2_SECRET}",
+           "--scope", "https://graph.microsoft.com/.default"
+         ],
+         "env": {
+           "LOKKA_LOG_LEVEL": "INFO"
+         }
+       }
+     }
+   }
+   ```
+
+#### Option C: Generic MCP Configuration
+
+**For other MCP-compatible clients:**
+
+```bash
+# Copy to standard location
+cp config/templates/mcp-servers-template.json ~/.mcp-config.json
 ```
 
 ## Step 5: Test MCP-Only Authentication
 
-### 5.1 Load Environment
+### 5.1 Load Environment Variables
 
 ```bash
 source scripts/utilities/load-env.sh
 ```
 
-### 5.2 Test Lokka MCP Directly
+### 5.2 Test Lokka MCP Directly (Command Line)
 
 ```bash
 # Test Dasein Research Group
@@ -159,18 +294,63 @@ lokka-mcp \
 
 ### 5.3 Start Your MCP Client
 
+#### For VS Code:
+
+```bash
+# Load environment first (critical!)
+source scripts/utilities/load-env.sh
+
+# Start VS Code from same terminal to inherit environment
+code .
+
+# In VS Code:
+# 1. Open Command Palette (Cmd/Ctrl + Shift + P)
+# 2. Type "MCP: Connect to Server"
+# 3. Select "lokka-dasein" or "lokka-spectral"
+# 4. Test with MCP commands or GitHub Copilot integration
+```
+
+#### For Claude Desktop:
+
+```bash
+# Load environment first (critical!)
+source scripts/utilities/load-env.sh
+
+# Start Claude Desktop from terminal to inherit environment
+open -a "Claude"    # macOS
+# or
+start "Claude"      # Windows
+
+# In Claude Desktop, the MCP servers should automatically connect
+```
+
+#### For Other MCP Clients:
+
 ```bash
 # Load environment first
 source scripts/utilities/load-env.sh
 
-# Start your MCP client
-code .              # VS Code
-open -a "Claude"    # Claude Desktop
+# Start your client from same terminal
+your-mcp-client
 ```
 
-### 5.4 Test Queries
+### 5.4 Test Queries in Your MCP Client
 
-Try these in your MCP client:
+#### VS Code Testing:
+
+In VS Code with GitHub Copilot, try asking:
+
+```
+@lokka-dasein Show me the organization details for this tenant
+
+@lokka-spectral List the first 5 users in this tenant
+
+Compare user counts between @lokka-dasein and @lokka-spectral
+```
+
+#### Claude Desktop Testing:
+
+In Claude Desktop, try these queries:
 
 ```
 Show me the organization details for the Dasein Research Group tenant
@@ -179,6 +359,24 @@ Show me the organization details for the Dasein Research Group tenant
 ```
 List users in the Spectral Solutions tenant
 ```
+
+```
+What Microsoft 365 licenses are available in both tenants?
+```
+
+### 5.5 Verify MCP Server Status
+
+#### Check VS Code MCP Status:
+
+1. Open VS Code Command Palette (`Cmd/Ctrl + Shift + P`)
+2. Type "MCP: Show Server Status"
+3. Verify both `lokka-dasein` and `lokka-spectral` show as "Connected"
+
+#### Check Claude Desktop MCP Status:
+
+1. In Claude Desktop, look for MCP server indicators
+2. You should see "🔌" icons indicating connected servers
+3. Try typing "Available MCP servers" to see the list
 
 ## Step 6: Validation Script (MCP-Only)
 
