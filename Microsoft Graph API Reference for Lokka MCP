@@ -1,0 +1,353 @@
+# Microsoft Graph API Reference for Lokka MCP
+
+## API Endpoint Base URLs
+
+- **Microsoft Graph**: `https://graph.microsoft.com/v1.0/`
+- **Beta Endpoint**: `https://graph.microsoft.com/beta/`
+- **Azure Resource Management**: `https://management.azure.com/`
+
+## Authentication & Tenant Information
+
+### Get Tenant Information
+
+- **Endpoint**: `GET /organization`
+- **Description**: Retrieve organization/tenant details including domain, display name, and settings
+- **Usage**: "Show me information about this tenant"
+- **Permissions**: `Organization.Read.All`
+
+### Get Current User Context
+
+- **Endpoint**: `GET /me`
+- **Description**: Information about the currently authenticated user/application
+- **Usage**: Verify authentication and permissions
+- **Permissions**: `User.Read`
+
+## User Management
+
+### List Users
+
+- **Endpoint**: `GET /users`
+- **Description**: Retrieve all users in the tenant
+- **Usage**: "Show me all users" / "List users in the tenant"
+- **Permissions**: `User.Read.All`
+- **Query Parameters**: `$select`, `$filter`, `$top`, `$skip`
+
+### Get Specific User
+
+- **Endpoint**: `GET /users/{user-id}`
+- **Description**: Retrieve details for a specific user
+- **Usage**: "Show me details for user [email/ID]"
+- **Permissions**: `User.Read.All`
+
+### Filter Users
+
+- **Endpoint**: `GET /users?$filter={condition}`
+- **Description**: Filter users based on conditions
+- **Usage**: "Show me users who haven't signed in for 30 days"
+- **Example**: `$filter=signInActivity/lastSignInDateTime lt 2025-06-11T00:00:00Z`
+- **Permissions**: `User.Read.All`, `AuditLog.Read.All`
+
+### User Sign-in Activity
+
+- **Endpoint**: `GET /users/{user-id}?$select=signInActivity`
+- **Description**: Get user's last sign-in information
+- **Usage**: "When did [user] last sign in?"
+- **Permissions**: `AuditLog.Read.All`
+
+## Group Management
+
+### List Groups
+
+- **Endpoint**: `GET /groups`
+- **Description**: Retrieve all groups in the tenant
+- **Usage**: "Show me all groups" / "List security groups"
+- **Permissions**: `Group.Read.All`
+
+### Get Group Members
+
+- **Endpoint**: `GET /groups/{group-id}/members`
+- **Description**: List members of a specific group
+- **Usage**: "Show me members of the 'Sales' group"
+- **Permissions**: `GroupMember.Read.All`
+
+### Create Group
+
+- **Endpoint**: `POST /groups`
+- **Description**: Create a new security or Microsoft 365 group
+- **Usage**: "Create a new security group called 'Sales and HR'"
+- **Permissions**: `Group.Create`
+
+## Application Management
+
+### List Applications
+
+- **Endpoint**: `GET /applications`
+- **Description**: Retrieve all application registrations
+- **Usage**: "Show me all registered applications"
+- **Permissions**: `Application.Read.All`
+
+### List Service Principals
+
+- **Endpoint**: `GET /servicePrincipals`
+- **Description**: List service principals (enterprise applications)
+- **Usage**: "Show me all enterprise applications"
+- **Permissions**: `Application.Read.All`
+
+### Get Application Permissions
+
+- **Endpoint**: `GET /applications/{app-id}/appRoleAssignments`
+- **Description**: Get permissions assigned to an application
+- **Usage**: "What permissions does this app have?"
+- **Permissions**: `Application.Read.All`
+
+## Security & Compliance
+
+### Conditional Access Policies
+
+- **Endpoint**: `GET /identity/conditionalAccess/policies`
+- **Description**: List all conditional access policies
+- **Usage**: "Show me conditional access policies"
+- **Permissions**: `Policy.Read.All`
+
+### Named Locations
+
+- **Endpoint**: `GET /identity/conditionalAccess/namedLocations`
+- **Description**: Get configured named locations for conditional access
+- **Usage**: "Show me trusted locations"
+- **Permissions**: `Policy.Read.All`
+
+### Directory Roles
+
+- **Endpoint**: `GET /directoryRoles`
+- **Description**: List active directory roles
+- **Usage**: "Show me all admin roles"
+- **Permissions**: `RoleManagement.Read.Directory`
+
+### Role Assignments
+
+- **Endpoint**: `GET /roleManagement/directory/roleAssignments`
+- **Description**: Get role assignments for users/groups
+- **Usage**: "Who has Global Administrator role?"
+- **Permissions**: `RoleManagement.Read.Directory`
+
+## Microsoft 365 Licenses
+
+### Available Licenses
+
+- **Endpoint**: `GET /subscribedSkus`
+- **Description**: Show available license types and consumption
+- **Usage**: "How many Microsoft 365 licenses do we have?"
+- **Permissions**: `Organization.Read.All`
+
+### User License Assignments
+
+- **Endpoint**: `GET /users/{user-id}/licenseDetails`
+- **Description**: Get licenses assigned to a specific user
+- **Usage**: "What licenses does [user] have?"
+- **Permissions**: `User.Read.All`
+
+## Exchange Online
+
+### Mailbox Settings
+
+- **Endpoint**: `GET /users/{user-id}/mailboxSettings`
+- **Description**: Get user's mailbox configuration
+- **Usage**: "Show me mailbox settings for [user]"
+- **Permissions**: `MailboxSettings.Read`
+
+### Message Rules
+
+- **Endpoint**: `GET /users/{user-id}/mailFolders/inbox/messageRules`
+- **Description**: Get inbox rules for a user
+- **Usage**: "Show me email rules for [user]"
+- **Permissions**: `MailboxSettings.Read`
+
+### Mail Forwarding
+
+- **Endpoint**: `GET /users?$select=mailNickname,forwardingSmtpAddress`
+- **Description**: Find users with mail forwarding enabled
+- **Usage**: "List all users with mailbox forwarding enabled"
+- **Permissions**: `User.Read.All`
+
+## OneDrive & SharePoint
+
+### OneDrive Usage
+
+- **Endpoint**: `GET /users/{user-id}/drive`
+- **Description**: Get OneDrive information and usage
+- **Usage**: "Show me OneDrive usage for [user]"
+- **Permissions**: `Files.Read.All`
+
+### Site Collections
+
+- **Endpoint**: `GET /sites`
+- **Description**: List SharePoint sites
+- **Usage**: "Show me all SharePoint sites"
+- **Permissions**: `Sites.Read.All`
+
+### Drive Storage Quota
+
+- **Endpoint**: `GET /users/{user-id}/drive?$select=quota`
+- **Description**: Check OneDrive storage quota and usage
+- **Usage**: "List OneDrive accounts over 90% full"
+- **Permissions**: `Files.Read.All`
+
+## Intune Device Management
+
+### Managed Devices
+
+- **Endpoint**: `GET /deviceManagement/managedDevices`
+- **Description**: List all Intune-managed devices
+- **Usage**: "Show me all managed devices"
+- **Permissions**: `DeviceManagementManagedDevices.Read.All`
+
+### Device Configuration Policies
+
+- **Endpoint**: `GET /deviceManagement/deviceConfigurations`
+- **Description**: List device configuration policies
+- **Usage**: "Show me Intune device configuration policies"
+- **Permissions**: `DeviceManagementConfiguration.Read.All`
+
+### App Protection Policies
+
+- **Endpoint**: `GET /deviceAppManagement/managedAppPolicies`
+- **Description**: List mobile application management policies
+- **Usage**: "Show me app protection policies"
+- **Permissions**: `DeviceManagementApps.Read.All`
+
+### Device Compliance
+
+- **Endpoint**: `GET /deviceManagement/deviceCompliancePolicies`
+- **Description**: List device compliance policies
+- **Usage**: "Show me device compliance policies"
+- **Permissions**: `DeviceManagementConfiguration.Read.All`
+
+## Audit & Reports
+
+### Audit Logs
+
+- **Endpoint**: `GET /auditLogs/directoryAudits`
+- **Description**: Get directory audit logs
+- **Usage**: "Show me recent admin activities"
+- **Permissions**: `AuditLog.Read.All`
+
+### Sign-in Logs
+
+- **Endpoint**: `GET /auditLogs/signIns`
+- **Description**: Get user sign-in logs
+- **Usage**: "Show me recent sign-in failures"
+- **Permissions**: `AuditLog.Read.All`
+
+### Usage Reports
+
+- **Endpoint**: `GET /reports/getEmailActivityUserDetail(period='D30')`
+- **Description**: Get email activity reports
+- **Usage**: "Show me email usage for the last 30 days"
+- **Permissions**: `Reports.Read.All`
+
+## Azure Resource Management APIs
+
+### Subscriptions
+
+- **Endpoint**: `GET /subscriptions`
+- **Description**: List Azure subscriptions
+- **Usage**: "Show me all Azure subscriptions"
+- **Permissions**: `Reader` role on subscription
+
+### Resource Groups
+
+- **Endpoint**: `GET /subscriptions/{subscription-id}/resourceGroups`
+- **Description**: List resource groups in a subscription
+- **Usage**: "Show me resource groups"
+- **Permissions**: `Reader` role
+
+### Cost Management
+
+- **Endpoint**: `POST /subscriptions/{subscription-id}/providers/Microsoft.CostManagement/query`
+- **Description**: Query Azure costs and usage
+- **Usage**: "What was the most expensive service in Azure last month?"
+- **Permissions**: `Cost Management Reader`
+
+## Common Query Parameters
+
+### Filtering & Selection
+
+- `$select=property1,property2` - Select specific properties
+- `$filter=property eq 'value'` - Filter results
+- `$top=100` - Limit number of results
+- `$skip=50` - Skip first N results
+- `$orderby=property asc/desc` - Sort results
+- `$expand=navigationProperty` - Include related data
+
+### Advanced Query Headers
+
+- `ConsistencyLevel: eventual` - Required for advanced queries with $count, $search
+- `$count=true` - Include count of total results
+- `$search="searchTerm"` - Search across properties
+
+## Error Handling
+
+### Common HTTP Status Codes
+
+- **200 OK**: Successful request
+- **400 Bad Request**: Invalid query or parameters
+- **401 Unauthorized**: Authentication failed
+- **403 Forbidden**: Insufficient permissions
+- **404 Not Found**: Resource doesn't exist
+- **429 Too Many Requests**: Rate limit exceeded
+- **500 Internal Server Error**: Server error
+
+### Rate Limits
+
+- **Microsoft Graph**: 10,000 requests per 10 minutes per app per tenant
+- **Azure Resource Manager**: 12,000 reads per hour per subscription
+
+## Natural Language Examples
+
+### User Management Queries
+
+- "Show me users who haven't signed in for the last 30 days"
+- "List all users with Global Administrator role"
+- "Find users with mailbox forwarding enabled"
+- "Show me inactive user accounts"
+
+### Group & Security Queries
+
+- "List all security groups"
+- "Show me conditional access policies that haven't excluded the emergency access account"
+- "Find all Intune device configuration policies assigned to the 'Call center' group"
+
+### License & Cost Queries
+
+- "How many unused Microsoft 365 licenses do we have?"
+- "What was the most expensive Azure service last month?"
+- "Show me OneDrive accounts that are over 90% full"
+
+### Compliance & Audit Queries
+
+- "Show me recent admin activities"
+- "List all failed sign-in attempts from the last week"
+- "Find all apps with high-risk permissions"
+
+## Best Practices
+
+### Query Optimization
+
+- Use `$select` to limit returned properties
+- Use `$filter` instead of client-side filtering
+- Implement pagination for large result sets
+- Use `$count=true` sparingly (requires eventual consistency)
+
+### Permission Management
+
+- Request minimal required permissions
+- Use application permissions for server-to-server scenarios
+- Regularly audit and review granted permissions
+- Implement proper error handling for permission issues
+
+### Rate Limit Management
+
+- Implement exponential backoff for 429 responses
+- Use batch requests for multiple operations
+- Cache frequently accessed data when appropriate
+- Monitor usage through Azure portal metrics

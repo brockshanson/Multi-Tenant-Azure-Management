@@ -1,0 +1,80 @@
+# Sensitive Configuration Files
+*.secret
+*.key
+client-secrets.json
+mcp-config-private.json
+
+# Environment Variables
+.env
+.env.local
+.env.production
+
+# Azure CLI Cache
+.azure/
+
+# VS Code Settings (keep extensions.json but ignore user-specific settings)
+.vscode/settings.json
+.vscode/launch.json
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary Files
+*.tmp
+*.temp
+*~
+
+# Node.js (if using Node-based MCP clients)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python (if using Python automation scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PowerShell (if using PowerShell scripts)
+*.ps1xml
+
+# Backup files
+*.bak
+*.backup
+
+# IDE files
+.idea/
+*.swp
+*.swo
+
+# Authentication tokens (extra safety)
+*token*
+*auth*
+*credential*

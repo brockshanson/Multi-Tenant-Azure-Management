@@ -1,0 +1,16 @@
+{
+  "recommendations": [
+    "github.copilot",
+    "github.copilot-chat",
+    "ms-vscode.azure-account",
+    "ms-vscode.azure-cli-tools",
+    "ms-vscode.powershell",
+    "ms-python.python",
+    "yzhang.markdown-all-in-one",
+    "eamodio.gitlens",
+    "humao.rest-client",
+    "ms-vscode.vscode-json",
+    "redhat.vscode-yaml",
+    "ms-azure-devops.azure-pipelines"
+  ]
+}
