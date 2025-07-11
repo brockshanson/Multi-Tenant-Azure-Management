@@ -5,9 +5,11 @@ client-secrets.json
 mcp-config-private.json
 
 # Environment Variables
-.env
-.env.local
-.env.production
+.env*
+!.env.template
+config/secrets/*.json
+config/secrets/*.key
+config/secrets/.env*
 
 # Azure CLI Cache
 .azure/
@@ -15,6 +17,10 @@ mcp-config-private.json
 # VS Code Settings (keep extensions.json but ignore user-specific settings)
 .vscode/settings.json
 .vscode/launch.json
+
+# Specific Workflows (keep templates)
+workflows/specific/
+!workflows/specific/.gitkeep
 
 # Operating System Files
 .DS_Store

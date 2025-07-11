@@ -1,0 +1,29 @@
+{
+  "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/servers/main/schema.json",
+  "mcpServers": {
+    "lokka-tenant-1": {
+      "command": "lokka",
+      "args": [
+        "--tenant-id", "${AZURE_TENANT_1_ID}",
+        "--client-id", "${AZURE_CLIENT_1_ID}",
+        "--client-secret", "${AZURE_CLIENT_1_SECRET}",
+        "--scope", "https://graph.microsoft.com/.default"
+      ],
+      "env": {
+        "LOKKA_LOG_LEVEL": "INFO"
+      }
+    },
+    "lokka-tenant-2": {
+      "command": "lokka",
+      "args": [
+        "--tenant-id", "${AZURE_TENANT_2_ID}",
+        "--client-id", "${AZURE_CLIENT_2_ID}",
+        "--client-secret", "${AZURE_CLIENT_2_SECRET}",
+        "--scope", "https://graph.microsoft.com/.default"
+      ],
+      "env": {
+        "LOKKA_LOG_LEVEL": "INFO"
+      }
+    }
+  }
+}

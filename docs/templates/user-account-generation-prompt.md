@@ -7,22 +7,24 @@ You are helping to populate two artificial Microsoft 365 test tenants with reali
 ## Organizations
 
 ### Dasein Research Group
+
 - **Industry**: Academic/Research Institution
 - **Size**: ~50 users (simulating established organization)
 - **Culture**: Collaborative, research-focused, academic environment
 - **Technology**: Mature Microsoft 365 adoption
-- **License Allocation**: 
+- **License Allocation**:
   - 5x Microsoft 365 F3 (Frontline workers - security, facilities)
   - 1x Microsoft 365 E5 (no Teams) (Executive/IT admin)
   - 4x Microsoft 365 Apps for Business (Faculty/researchers)
   - 1x Microsoft Teams Enterprise (Dedicated Teams-only user)
 
 ### Spectral Solutions
+
 - **Industry**: Technology Consulting/Solutions Provider
 - **Size**: ~25 users (simulating growing organization)
 - **Culture**: Agile, client-focused, innovative technology firm
 - **Technology**: Growing Microsoft 365 adoption
-- **License Allocation**: 
+- **License Allocation**:
   - 6x Microsoft 365 F3 (Part-time/contract workers)
   - 1x Microsoft 365 E5 (CTO/IT admin)
   - 5x Microsoft 365 Apps for Business (Core team members)
@@ -86,14 +88,8 @@ For each organization, provide a table with:
 ## Example Starter (Modify/Expand)
 
 ### Dasein Research Group Sample
-- Dr. Dana Skully (dana.skully@daseinresearch.com) - Research Director
-- Prof. Fox Mulder (fox.mulder@daseinresearch.com) - Senior Researcher
-- etc.
 
 ### Spectral Solutions Sample  
-- Alex Neo (alex.neo@spectralsolutions.com) - CTO
-- Morgan Trinity (morgan.trinity@spectralsolutions.com) - Solutions Architect
-- etc.
 
 ---
 
